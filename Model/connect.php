@@ -6,7 +6,7 @@
         // hàm tạo thực thi mặc định là cứ đối tượng thì nó sẽ
         // kế nối được với database
         public function __construct(){
-            $dsn = 'mysql:host=localhost;dbname=demo_sushi';
+            $dsn = 'mysql:host=localhost;dbname=the_sushi';
             $user = 'root';
             $pass = '';
 
