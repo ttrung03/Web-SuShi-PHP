@@ -1,0 +1,28 @@
+<section class="popular section">
+    <div class="main_login">
+        <form action="index.php?action=dangnhap&act=dangnhap_action" method="post" class="form" id="register-form">
+            <h2 class="section__title">Đăng Nhập</h3>
+                <div class="spacer"></div>
+
+                <div class="form-group">
+                    <label for="name" class="form-label">Tên Đăng Nhập:</label>
+                    <input type="text" required="" autofocus="" name="txtusername" id="name" class="form-control" placeholder="Tên đăng nhập">
+                    <!-- <span class="form-message" v-show="invalidName">{{errors.name}}</span> -->
+                </div>
+
+                <div class="form-group">
+                    <label for="password" class="form-label">Mật khẩu:</label>
+                    <input type="password" required="" autofocus="" name="txtpassword" id="password" class="form-control" placeholder="Nhập mật khẩu">
+                    <span class="form-message"> <a href="index.php?action=forgetps">Quên mật khẩu ?</a></span>
+                </div>
+
+
+
+                <div class="form-btn">
+                    <button class="form-submit">Đăng nhập</button>
+
+                </div>
+                <a href="index.php?action=dangky" class="dangky ">Đăng ký</a>
+        </form>
+    </div>
+</section>
