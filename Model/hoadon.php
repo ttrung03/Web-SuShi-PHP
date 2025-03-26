@@ -1,6 +1,7 @@
 <?php
 class hoadon
 {
+    // Thực hiện chức năng lấy chi tiết và thông tin hóa đơn
     function getHoadon()
     {
         $db = new connect();

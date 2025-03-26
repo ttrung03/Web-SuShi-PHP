@@ -1,5 +1,6 @@
 <?php
 
+// gọi đến view
 $act = "hoadon";
 
 if (isset($_GET['act'])) {

@@ -21,18 +21,17 @@ if (isset($_GET['act'])) {
             }
 
 
-            // thống kê ngày
             if ($option == 1) {
                 $day = date_format($date, "d"); // format ngày
                 $month = date_format($date, "m"); // format tháng
                 $year = date_format($date, "Y"); // format năm
             }
-            // thống kê tháng 
+
             else if ($option == 2) {
                 $month = $_POST['month'];
                 $year = $_POST['year'];
             }
-            // thống kê quý
+
             else if ($option == 3) {
                 $quarter = $_POST['quarter'];
                 $year = $_POST['year'];
