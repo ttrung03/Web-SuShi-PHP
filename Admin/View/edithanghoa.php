@@ -76,7 +76,7 @@ if ($ac == 1) {
       <td>
         <?php
         if (isset($hinh))
-          echo  "<label><img width='50px' height='50px' name='image' src='../DuAn/Content/img/$hinh' value='$hinh' ></label>";
+          echo  "<label><img width='50px' height='50px' name='image' src='../User/Content/img/$hinh' value='$hinh' ></label>";
         ?>
         Chọn file để upload:
         <input type="file" name="image" id="fileupload">

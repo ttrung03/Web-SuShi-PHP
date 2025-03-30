@@ -1,5 +1,5 @@
 <!-- Cart box -->
-<section class=" popular section">
+<section class="popular section">
     <?php
     if (!isset($_SESSION['cart']) || count($_SESSION['cart']) == 0) :
         echo '<script> alert("Giỏ hàng của bạn chưa có sản phẩm nào...");</script>';
@@ -17,23 +17,27 @@
                 $j = 0;
                 foreach ($_SESSION['cart'] as $key => $item) :
                     $j++;
+
+                    // Lấy thông tin chi tiết sản phẩm từ cơ sở dữ liệu (hình ảnh, tên, giá, ...)
+                    $dt = new hanghoa();
+                    $productDetails = $dt->getHangHoaId($item['mahh']);  // Lấy thông tin hàng hóa theo mã sản phẩm
+                    $hinh = $productDetails['hinh'];  // Hình ảnh của sản phẩm
                 ?>
 
                     <div class="cart-box grid">
                         <a href="index.php?action=sanpham&act=detail&id=<?php echo $item['mahh']; ?>">
-                            <img src="<?php echo $item['hinh'] ?>" alt="" class="cart-img">
+                            <img src="<?php echo './Content/img/' . $hinh; ?>" alt="" class="cart-img">
                         </a>
 
                         <div class="cart-detail grid ">
                             <p id="cart-title" class="popular__name"><?php echo $item['name']; ?></p>
                             <p id="cart-price" class="popular__price">$ <?php echo $item['dongia']; ?></p>
-                            <input type="number" class="cart-quantity" type="number" name="newqty[<?php echo $key; ?>]" value="<?php echo $item['soluong'] ?>" ?>
+                            <input type="number" class="cart-quantity" type="number" name="newqty[<?php echo $key; ?>]" value="<?php echo $item['soluong'] ?>" />
                         </div>
 
                         <!-- Remove -->
                         <div class="cart-icon">
                             <i class="cart-remove bx bxs-trash" onclick="location.href='index.php?action=giohang&act=delete_item&id=<?php echo $key ?>'"> </i>
-                            <!-- onclick="location.href='index.php?action=giohang&act=update_item'" -->
                             <button type="submit" class='cart-edit'><i class=' cart-edit bx bxs-edit'></i></button>
                         </div>
                     </div>

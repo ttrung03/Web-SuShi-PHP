@@ -36,7 +36,7 @@
           <td><?php echo $set['tenhh']; ?></td>
           <td><?php echo $set['dongia']; ?>$</td>
           <td><?php echo $set['giamgia']; ?></td>
-          <td><img width="50px" height="50px" src="<?php echo '../DuAn/Content/img/' . $set['hinh'] ?>" /></td>
+          <td><img width="50px" height="50px" src="<?php echo '../User/Content/img/' . $set['hinh'] ?>" /></td>
           <td><?php echo $set['maloai']; ?></td>
           <td><?php echo $set['soluotxem']; ?></td>
           <td><?php echo $set['ngaylap']; ?></td>

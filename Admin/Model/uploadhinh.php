@@ -2,7 +2,7 @@
     function uploadimage()
     {
         // b1: cần tạo ra thư mục chứa hình
-        $target_dir="D:/xampp/htdocs/DuAn/Content/img/";
+        $target_dir="C:/laragon/www/Web-SuShi-PHP/User/Content/img/";
         // b2: cần lấy tên hình về
         // Content/imagetourdien/giaycongso.jpg
         $target_file=$target_dir.basename($_FILES['image']['name']);

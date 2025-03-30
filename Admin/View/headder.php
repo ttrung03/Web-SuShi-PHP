@@ -15,29 +15,17 @@
                             <a class="nav-link" href="index.php?action=hanghoa">Trang Chủ</a>
                         </li>
 
-                        <!-- Quản trị Doanh Mục -->
+
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">
-                                Quản Trị Doanh Mục
+                                Thống Kê
                             </a>
                             <div class="dropdown-menu">
-                                <a class="dropdown-item" href="index.php?action=loai">Import CSV</a>
-
+                                <a class="dropdown-item" href="index.php?action=thongke">Sản Phẩm bán được nhiều Nhất</a>
+                                <a class="dropdown-item" href="index.php?action=hoadon">Thống kê Hóa Đơn</a>
                             </div>
                         </li>
-
-                        <!-- Báo cáo -->
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">
-                                Báo Cáo
-                            </a>
-                            <div class="dropdown-menu">
-                                <a class="dropdown-item" href="#">Tháng</a>
-                                <a class="dropdown-item" href="#">Quý</a>
-                                <a class="dropdown-item" href="#">Năm</a>
-                            </div>
-                        </li>
-                        <!-- Báo cáo Tồn kho -->
+                       
                         <li class="nav-item">
                             <a class="nav-link" href="index.php?action=dangnhap&act=changepass" class="mt-3 d-block">Change passwprd</a>
                         </li>
