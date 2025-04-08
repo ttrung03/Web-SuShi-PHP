@@ -84,6 +84,7 @@
         <div class="comment_content">
         <?php if (isset($_SESSION['makh'])) { ?>
             <form class="comment_content" action="index.php?action=sanpham&act=comment&id=<?php echo $id ?>" method="post">
+
                 <input type="hidden" name="txtmahh" value="<?php echo $mahh ?>" />
                 <img src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="" class="comment_avatar">
                 <textarea type="text" name="comment" class="comment" rows="2" cols="70" placeholder="Xuân đi để lại lá vàng,người xem để muôn ngàn bình luận"></textarea>

@@ -22,37 +22,49 @@ class user
     }
 
 
-// Phương thức InsertUserOut trong user.php
-function InsertUserOut($tenkh, $email, $diachi, $dt)
-{
-    $db = new connect();
+// // Phương thức InsertUserOut trong user.php
+// function InsertUserOut($tenkh, $email, $diachi, $dt)
+// {
+//     $db = new connect();
 
-    // Tạo username từ tên người dùng
-    $username = strtolower(str_replace(' ', '', $tenkh));  // Loại bỏ khoảng trắng và chuyển thành chữ thường
+//     // Tạo username từ tên người dùng
+//     $username = strtolower(str_replace(' ', '', $tenkh));  // Loại bỏ khoảng trắng và chuyển thành chữ thường
     
-    // Câu lệnh INSERT
-    $query = "INSERT INTO khachhang1 (makh, tenkh, username, email, diachi, sodienthoai) 
-              VALUES (NULL, :tenkh, :username, :email, :diachi, :dt)";
-    $params = [
-        ':tenkh' => $tenkh,
-        ':username' => $username,
-        ':email' => $email,
-        ':diachi' => $diachi,
-        ':dt' => $dt
-    ];
+//     // Câu lệnh INSERT
+//     $query = "INSERT INTO khachhang1 (makh, tenkh, username, email, diachi, sodienthoai) 
+//               VALUES (NULL, :tenkh, :username, :email, :diachi, :dt)";
+//     $params = [
+//         ':tenkh' => $tenkh,
+//         ':username' => $username,
+//         ':email' => $email,
+//         ':diachi' => $diachi,
+//         ':dt' => $dt
+//     ];
 
-    // Kiểm tra câu lệnh thực thi
-    try {
-        // Thực thi câu lệnh INSERT
-        $db->exec($query, $params);
-        return true; // Trả về true khi thêm người dùng thành công
-    } catch (PDOException $e) {
-        // Nếu có lỗi, thông báo lỗi
-        echo "Lỗi khi thêm người dùng: " . $e->getMessage();
-        return false;
-    }
-}
+//     // Kiểm tra câu lệnh thực thi
+//     try {
+//         // Thực thi câu lệnh INSERT
+//         $db->exec($query, $params);
+//         return true; // Trả về true khi thêm người dùng thành công
+//     } catch (PDOException $e) {
+//         // Nếu có lỗi, thông báo lỗi
+//         echo "Lỗi khi thêm người dùng: " . $e->getMessage();
+//         return false;
+//     }
+// }
   
+
+function InsetUserOut($tenkh, $email, $diachi, $dt)
+    {
+        $db = new connect();
+        $select = "select * from user1 where tenkh='$tenkh' and email='$email'";
+        if ($select) {
+            $query = "insert into user1(makh, tenkh, email, diachi, sodienthoai) 
+            values(NULL, '$tenkh', '$email', '$diachi', '$dt')";
+            $db->exec($query);
+        }
+    }
+
 
     function login($username, $password)
     {

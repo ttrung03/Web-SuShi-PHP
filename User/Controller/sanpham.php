@@ -19,21 +19,22 @@ switch ($act) {
     case 'timkiem':
         include './View/sanpham.php';
         break;
-    case 'comment':
-        if (isset($_GET["id"])) {
-            $mahh = $_GET['id'];
-            $makh = $_SESSION['makh'];
-            $noidung = $_POST['comment'];
-            if ($noidung != null) {
-                //$usr = new user();
-                //$usr->insertcomment($mahh, $makh, $noidung);
-            } else {
-                echo '<script> alert("Bạn chưa nhập bình luận !!");</script>';
+        case 'comment':
+            if (isset($_GET["id"]) && isset($_SESSION['makh'])) {
+                $mahh = $_GET['id'];
+                $makh = $_SESSION['makh'];
+                $noidung = $_POST['comment'] ?? '';
+                if (!empty($noidung)) {
+                    $usr = new user();
+                    $usr->insertcomment($mahh, $makh, $noidung);
+                } else {
+                    echo '<script> alert("Bạn chưa nhập bình luận !!");</script>';
+                }
             }
-        }
-        include "./View/detail.php";
-        break;
-
+            // ✅ Redirect lại trang chi tiết để load lại dữ liệu
+            header("Location: index.php?action=sanpham&act=detail&id=$mahh");
+            exit();
+              
     case 'filterproduct':
         include './View/sanpham.php';
         break;

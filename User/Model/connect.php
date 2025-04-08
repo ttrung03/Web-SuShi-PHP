@@ -51,14 +51,14 @@
         
         
          //user 
-         public function exec ($query) {
+         public function exec($query, $params = []) {
             try {
-                $stmt = $this->db->prepare($query);  // Chuẩn bị câu lệnh SQL
-                $result = $stmt->execute();  // Thực thi câu lệnh
-                return $result;  // Trả về kết quả
+                $stmt = $this->db->prepare($query);
+                $result = $stmt->execute($params); // ✅ Bây giờ dùng $params
+                return $result;
             } catch (PDOException $e) {
                 echo "Lỗi thực thi câu lệnh: " . $e->getMessage();
                 return false;
             }
-    }
+        }
 }
