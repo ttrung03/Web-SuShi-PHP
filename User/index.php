@@ -38,11 +38,18 @@ spl_autoload_register();
     <!-- =============== Main =============== -->
     <?php
 
-    $ctrl = 'main';
-    if (isset($_GET['action'])) {
-        $ctrl = $_GET['action'];
-    };
-    include('./Controller/' . $ctrl . '.php');
+$ctrl = 'main';
+if (isset($_GET['action'])) {
+    $tmp = $_GET['action'];
+    
+    // Kiểm tra file controller tồn tại trước khi include
+    if (file_exists('./Controller/' . $tmp . '.php')) {
+        $ctrl = $tmp;
+    } else {
+        $ctrl = 'main'; // fallback nếu không có controller tương ứng
+    }
+}
+include('./Controller/' . $ctrl . '.php');
 
     ?>
 

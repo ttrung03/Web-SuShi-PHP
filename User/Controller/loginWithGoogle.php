@@ -3,8 +3,8 @@ session_start();
 include "./PHPMailer/src/PHPMailer.php";
 include "./PHPMailer/src/SMTP.php";
 
-require_once __DIR__ . '/../vendor/autoload.php';  // Đảm bảo Composer autoload được bao gồm
-require_once '../model/user.php';  // Đảm bảo bạn đã tạo file user.php trong thư mục model
+require_once __DIR__ . '/../vendor/autoload.php';
+require_once '../model/user.php';
 
 use Google\Client as Google_Client;
 use Google\Service\Oauth2 as Google_Service_Oauth2;
@@ -28,22 +28,23 @@ if (!isset($_GET['code'])) {
         $oauth = new Google_Service_Oauth2($client);
         $userInfo = $oauth->userinfo->get();
 
-        // Kiểm tra nếu email đã có trong cơ sở dữ liệu
+        // Kiểm tra email đã có trong DB chưa
         $ur = new user();
         $existingUser = $ur->getUserByEmail($userInfo->email);
 
         if ($existingUser) {
-            // Nếu người dùng đã tồn tại, lưu thông tin vào session
+            // Đăng nhập
             $_SESSION['makh'] = $existingUser['makh'];
             $_SESSION['tenkh'] = $existingUser['tenkh'];
             $_SESSION['username'] = $existingUser['username'];
             header('Location: http://localhost/Web-SuShi-PHP/User/index.php?action=main');
             exit();
         } else {
-            // Nếu người dùng chưa có, chuyển hướng đến trang đăng ký
-            $_SESSION['email'] = $userInfo->email;  // Lưu email vào session
-            $_SESSION['google_name'] = $userInfo->name;  // Lưu tên vào session
-            header('Location: http://localhost/Web-SuShi-PHP/User/Controller/dangky_google.php');
+            // Chuyển sang trang bổ sung thông tin đăng ký Google
+            $_SESSION['email'] = $userInfo->email;
+            $_SESSION['google_name'] = $userInfo->name;
+            header('Location: http://localhost/Web-SuShi-PHP/User/Controller/dangky.php?act=google_register');
+
             exit();
         }
 
@@ -52,4 +53,3 @@ if (!isset($_GET['code'])) {
         exit();
     }
 }
-?>

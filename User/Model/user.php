@@ -147,4 +147,35 @@ function getNoiDungComment($mahh)
         $result = $db->getInstance($select);
         return $result;
     }
+
+    function addGoogleUser($tenkh, $email, $phone, $address)
+    {
+        $db = new connect();
+    
+        // Tạo username đơn giản từ email
+        $username = explode('@', $email)[0];
+    
+        $query = "INSERT INTO khachhang1 (tenkh, username, email, sodienthoai, diachi) 
+                  VALUES (:tenkh, :username, :email, :phone, :address)";
+    
+        $params = [
+            ':tenkh' => $tenkh,
+            ':username' => $username,
+            ':email' => $email,
+            ':phone' => $phone,
+            ':address' => $address
+        ];
+    
+        try {
+            $db->exec($query, $params);
+    
+            // Lấy mã khách hàng mới nhất
+            $result = $db->getInstance("SELECT LAST_INSERT_ID() as makh");
+            return $result['makh'];
+        } catch (PDOException $e) {
+            echo "Lỗi khi thêm người dùng: " . $e->getMessage();
+            return false;
+        }
+    }
+    
 }

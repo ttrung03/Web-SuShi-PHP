@@ -25,17 +25,17 @@ switch ($act) {
             $check = $ur -> InsetUser($tenkh, $username, $crypt, $email, $diachi, $sodt);
             if ($check !='false') {
                 echo '<script> alert("Đăng Kí thành công");</script>';
-                include './View/main.php';
+                include '../View/main.php';
             }
             else {
                 echo '<script> alert("Đăng kí không thành công");</script>';
-                include './View/dangky.php';
+                include '../View/dangky.php';
             }
         }
         break;
         
         case 'google_register':
-            include './View/dangky_google.php'; // View mới để nhập thêm thông tin
+            include '../View/dangky_google.php'; // View mới để nhập thêm thông tin
             break;
     
         
