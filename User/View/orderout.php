@@ -1,3 +1,4 @@
+
 <?php
 if (!isset($_SESSION['cart']) || count($_SESSION['cart']) == 0) :
     echo '<script> alert("Giỏ hàng của bạn chưa có sản phẩm nào...");</script>';
@@ -38,7 +39,7 @@ else :
                     </div>
                     <!-- Buy Button -->
                     <div class="flex cart-buy">
-                        <button class="form-submit">Buy Now</button>
+                        <button class="form-submit">Xác nhận thanh toán</button>
                     </div>
                 </form>
                 <div class="user_pro">

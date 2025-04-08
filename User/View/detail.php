@@ -1,3 +1,4 @@
+
 <section class="about section" id="about">
 
     <div class="about__container container grid">
