@@ -7,6 +7,7 @@ switch ($act) {
     case 'orderout':
         include './View/orderout.php';
         break;
+
     case 'orderout_action':
         // khi người dùng nhấn đăng kí, nó chuyển qua đây là tên, địa chỉ, sđt
         if (isset($_POST['txttenkh'])) {
@@ -16,6 +17,7 @@ switch ($act) {
             $username = $_POST['txtusername'];
             $email = $_POST['txtemail'];
             // mật khẩu người dùng nhập vào sẽ dùng md5 để mã hóa
+            
 
             //controller yêu cầu model viết lệnh insert vào bảng khách hàng
             //trước khi insert kiểm tra $username có tồn tại trong database hay chưa
