@@ -70,26 +70,58 @@ function InsertUserOut($tenkh, $email, $diachi, $dt)
         $db = new connect();
         $date = new DateTime("now");
         $datecreate = $date->format("Y-m-d");
-        $query = "insert into binhluan1(mabl, mahh, makh, ngaybl, noidung) 
-        values(Null, $mahh, $makh, '$datecreate', '$noidung')";
-        $db->exec($query);
+    
+        // Dùng tham số để bảo vệ khỏi SQL Injection
+        $query = "INSERT INTO binhluan1 (mabl, mahh, makh, ngaybl, noidung) 
+                  VALUES (NULL, :mahh, :makh, :ngaybl, :noidung)";
+        
+        $params = [
+            ':mahh' => $mahh,
+            ':makh' => $makh,
+            ':ngaybl' => $datecreate,
+            ':noidung' => $noidung
+        ];
+    
+        // Thực thi câu lệnh
+        $db->exec($query, $params);
     }
+    
+    
 
     function getCountComment($mahh)
-    {
-        $db = new connect();
-        $select = "select count(mabl) from binhluan1 where mahh=$mahh";
-        $result = $db->getInstance($select);
-        return $result[0];
+{
+    $db = new connect();
+    $select = "SELECT count(mabl) as count FROM binhluan1 WHERE mahh = :mahh";
+    $params = [':mahh' => $mahh];  // Truyền tham số an toàn
+
+    $result = $db->getInstance($select, $params);
+    
+    if ($result) {
+        return $result['count'];  // Trả về số lượng bình luận
+    } else {
+        return 0;  // Nếu không có bình luận, trả về 0
     }
-    function getNoiDungComment($mahh)
-    {
-        $db = new connect();
-        $select = "select a.username, b.noidung, b.ngaybl from khachhang1 a
-        inner join binhluan1 b on a.makh=b.makh where b.mahh = $mahh";
-        $result = $db->getList($select);
-        return $result;
+}
+
+function getNoiDungComment($mahh)
+{
+    $db = new connect();
+    $select = "SELECT a.username, b.noidung, b.ngaybl 
+               FROM khachhang1 a
+               INNER JOIN binhluan1 b ON a.makh = b.makh 
+               WHERE b.mahh = :mahh";
+    $params = [':mahh' => $mahh];  // Truyền tham số an toàn
+
+    $result = $db->getList($select, $params);
+    
+    // Kiểm tra nếu không có bình luận nào
+    if ($result) {
+        return $result;  // Trả về dữ liệu bình luận
+    } else {
+        return [];  // Nếu không có bình luận, trả về mảng rỗng
     }
+}
+
     //kiểm tra email có tồn tại không 
     function getEmail($email)
     {

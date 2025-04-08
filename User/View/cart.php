@@ -1,4 +1,3 @@
-<!-- Cart box -->
 <section class="popular section">
     <?php
     if (!isset($_SESSION['cart']) || count($_SESSION['cart']) == 0) :
@@ -8,11 +7,11 @@
     <?php
     else :
     ?>
-        <form method="post" action="index.php?action=giohang&act=update_item" class="cart-container " id="cart-container">
+        <form method="post" action="index.php?action=giohang&act=update_item" class="cart-container" id="cart-container">
             <div class="cart-title section__title">Your Cart</div>
 
             <!-- Content -->
-            <div class="cart-content ">
+            <div class="cart-content">
                 <?php
                 $j = 0;
                 foreach ($_SESSION['cart'] as $key => $item) :
@@ -29,16 +28,16 @@
                             <img src="<?php echo './Content/img/' . $hinh; ?>" alt="" class="cart-img">
                         </a>
 
-                        <div class="cart-detail grid ">
+                        <div class="cart-detail grid">
                             <p id="cart-title" class="popular__name"><?php echo $item['name']; ?></p>
                             <p id="cart-price" class="popular__price">$ <?php echo $item['dongia']; ?></p>
-                            <input type="number" class="cart-quantity" type="number" name="newqty[<?php echo $key; ?>]" value="<?php echo $item['soluong'] ?>" />
+                            <input type="number" class="cart-quantity" name="newqty[<?php echo $key; ?>]" value="<?php echo $item['soluong']; ?>" min="1" />
                         </div>
 
                         <!-- Remove -->
                         <div class="cart-icon">
                             <i class="cart-remove bx bxs-trash" onclick="location.href='index.php?action=giohang&act=delete_item&id=<?php echo $key ?>'"> </i>
-                            <button type="submit" class='cart-edit'><i class=' cart-edit bx bxs-edit'></i></button>
+                            <button type="submit" class='cart-edit'><i class='cart-edit bx bxs-edit'></i></button>
                         </div>
                     </div>
 
@@ -47,17 +46,15 @@
                 ?>
             </div>
 
-
             <!-- Total -->
-            <div class="total flex ">
-
+            <div class="total flex">
                 <p class="total-title popular__name">Total:</p>
                 <span class="total-price popular__price ">
                     <?php
                     $gh = new GioHang();
-                    echo  $gh->getTotal();
-                    ?>
-                    $</span>
+                    echo $gh->getTotal(); // Đảm bảo tính tổng tiền đúng
+                    ?> $
+                </span>
             </div>
 
             <!-- Buy Button -->
@@ -69,5 +66,4 @@
     <?php
     endif;
     ?>
-
 </section>

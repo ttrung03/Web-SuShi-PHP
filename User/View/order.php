@@ -36,7 +36,7 @@
             </tr>
         </table>
 
-        <!-- Thông tin sản phẩm -->
+        <!-- Thông tin sản phầm -->
         <table class="table">
             <thead style="background-color: #c3e6cb">
                 <tr class="table-success">
@@ -50,8 +50,8 @@
             <tbody>
                 <?php
                 $j = 0;
-                $result = $hd->getOrderDetail($_SESSION['sohd']);  // Lấy PDO statement
-                while ($set = $result->fetch(PDO::FETCH_ASSOC)) :  // Duyệt qua PDO statement
+                $result = $hd->getOrderDetail($_SESSION['sohd']);
+                while ($set = $result->fetch()) :
                     $j++;
                     $hh = new hanghoa();
                     $tloai = $hh->getTenLoai($set['maloai']);
@@ -68,6 +68,7 @@
                     </tr>
                 <?php
                 endwhile;
+
                 ?>
 
                 <tr>
@@ -80,8 +81,11 @@
                             ?> $
                         </span>
                     </td>
+
                 </tr>
             </tbody>
         </table>
+    </div>
+
     </div>
 </section>

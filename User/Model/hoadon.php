@@ -11,18 +11,22 @@ class hoadon
         $ngay = $date->format('Y-m-d');
         $db = new connect();
         $query = "INSERT INTO hoadon1 (masohd, makh, ngaydat, tongtien)
-                  VALUES (NULL, :makh, :ngay, 0)";
-        $params = [':makh' => $makh, ':ngay' => $ngay];
-        $db->exec($query, $params);  // Sử dụng prepared statement để thực thi câu lệnh
-    
+                  VALUES (NULL, :makh, :ngay, 0)";  // Sử dụng :makh và :ngay
+     
+        $params = [':makh' => $makh, ':ngay' => $ngay];  // Truyền tham số đúng cách
+        $db->exec($query, $params);  // Thực thi câu lệnh
+     
+        // Lấy mã hóa đơn mới nhất
         $seclect = "SELECT masohd FROM hoadon1 ORDER BY masohd DESC LIMIT 1";
         $mahd = $db->getInstance($seclect);
         return $mahd['masohd'];  // Trả về mã hóa đơn
     }
     
+    
+    
 
     //phuong thuc insert vao bang cthoadon
-    function insertOderDetail($mahd, $mah, $solung, $maloai, $thanhtien)
+    function insertOderDetail($mahd, $mah, $soluong, $maloai, $thanhtien)
     {
         $db = new connect();
         $query = "INSERT INTO cthoadon1 (masohd, mahh, soluongmua, maloai, thanhtien, tinhtrang) 
@@ -31,12 +35,14 @@ class hoadon
         $params = [
             ':mahd' => $mahd,
             ':mahh' => $mah,
-            ':solung' => $solung,
+            ':soluong' => $soluong,  // Lưu đúng số lượng
             ':maloai' => $maloai,
             ':thanhtien' => $thanhtien
         ];
-        $db->exec($query, $params);
+        $db->exec($query, $params);  // Thực thi câu lệnh
     }
+    
+    
     
 
     // cap nhat lai tông tiên
@@ -60,11 +66,12 @@ class hoadon
                                      WHEN soluongton <= 0 THEN 1 
                                      ELSE 0 
                                    END
-                  WHERE mahh = :mahh";
-    
-        $params = [':soluong' => $soluong, ':mahh' => $mahh];
-        $db->exec($query, $params);
+                  WHERE mahh = :mahh";  // Sử dụng tham số đúng
+     
+        $params = [':soluong' => $soluong, ':mahh' => $mahh];  // Truyền tham số đúng
+        $db->exec($query, $params);  // Thực thi câu lệnh
     }
+    
     
 
     // pt lay thong tin tu bang hoadon va khachhang

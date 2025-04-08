@@ -32,6 +32,7 @@
             }
         }
         
+        
         public function getInstance($select, $params = []) {
             try {
                 // Chuẩn bị câu lệnh SQL
