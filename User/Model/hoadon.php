@@ -10,22 +10,34 @@ class hoadon
         $date = new DateTime('now');
         $ngay = $date->format('Y-m-d');
         $db = new connect();
-        $query = "insert into hoadon1(masohd, makh, ngaydat,tongtien)
-        values(Null,$makh,'$ngay',0)";
-        $db->exec($query);
-        $seclect = "select masohd from hoadon1 order by masohd desc limit 1";
+        $query = "INSERT INTO hoadon1 (masohd, makh, ngaydat, tongtien)
+                  VALUES (NULL, :makh, :ngay, 0)";
+        $params = [':makh' => $makh, ':ngay' => $ngay];
+        $db->exec($query, $params);  // Sử dụng prepared statement để thực thi câu lệnh
+    
+        $seclect = "SELECT masohd FROM hoadon1 ORDER BY masohd DESC LIMIT 1";
         $mahd = $db->getInstance($seclect);
-        return $mahd[0];
+        return $mahd['masohd'];  // Trả về mã hóa đơn
     }
+    
 
     //phuong thuc insert vao bang cthoadon
     function insertOderDetail($mahd, $mah, $solung, $maloai, $thanhtien)
     {
         $db = new connect();
-        $query = "insert into cthoadon1(masohd,mahh,soluongmua,maloai,thanhtien,tinhtrang)
-        values($mahd,$mah,$solung, $maloai, $thanhtien,0)";
-        $db->exec($query);
+        $query = "INSERT INTO cthoadon1 (masohd, mahh, soluongmua, maloai, thanhtien, tinhtrang) 
+                  VALUES (:mahd, :mahh, :solung, :maloai, :thanhtien, 0)";
+        
+        $params = [
+            ':mahd' => $mahd,
+            ':mahh' => $mah,
+            ':solung' => $solung,
+            ':maloai' => $maloai,
+            ':thanhtien' => $thanhtien
+        ];
+        $db->exec($query, $params);
     }
+    
 
     // cap nhat lai tông tiên
     function updateOder($sohd, $tongtien)
@@ -38,43 +50,54 @@ class hoadon
     // cap nhat lai soluong
     function updateQuantity($mahh, $soluong)
     {
-        echo $mahh, $soluong;
         $db = new connect();
         $query = "UPDATE hanghoa 
-        SET soluongton = CASE 
-                            WHEN (soluongton - $soluong) < 0 THEN 0 
-                            ELSE 0
-                        END, 
-            tinhtrang = CASE 
-                            WHEN soluongton <= 0 THEN 1 
-                            ELSE 
-                                CASE 
-                                    WHEN soluongton > 0 THEN 0 
-                                    ELSE tinhtrang 
-                                END 
-                        END 
-        WHERE mahh = $mahh;
-        ";
-        $db->exec($query);
+                  SET soluongton = CASE 
+                                     WHEN (soluongton - :soluong) < 0 THEN 0 
+                                     ELSE soluongton - :soluong 
+                                   END, 
+                      tinhtrang = CASE 
+                                     WHEN soluongton <= 0 THEN 1 
+                                     ELSE 0 
+                                   END
+                  WHERE mahh = :mahh";
+    
+        $params = [':soluong' => $soluong, ':mahh' => $mahh];
+        $db->exec($query, $params);
     }
+    
 
     // pt lay thong tin tu bang hoadon va khachhang
     function getOrder($sohd)
     {
         $db = new connect();
-        $select = "select  a.masohd, b.tenkh, a.ngaydat, b.sodienthoai, b.diachi from hoadon1 a inner join khachhang1 b on a.makh = b.makh where a.masohd = $sohd";
-
-        $result = $db->getInstance($select);
-        return $result;
+        $select = "SELECT a.masohd, b.tenkh, a.ngaydat, b.sodienthoai, b.diachi 
+                   FROM hoadon1 a 
+                   INNER JOIN khachhang1 b ON a.makh = b.makh 
+                   WHERE a.masohd = :sohd";  // Sử dụng tham số :sohd
+    
+        $params = [':sohd' => $sohd];  // Truyền tham số vào câu lệnh SQL
+    
+        // Thực thi câu lệnh SQL và trả về kết quả
+        return $db->getInstance($select, $params);
     }
+    
 
     // pt lay thong tin tu bang hoadon va khachhang
     function getOrderDetail($sohd)
     {
         $db = new connect();
-        $select = "select  b.tenhh, a.maloai, a.soluongmua, b.dongia from cthoadon1 a inner join hanghoa b on a.mahh = b.mahh where a.masohd = $sohd";
-
-        $result = $db->getList($select);
-        return $result;
+        $select = "SELECT b.tenhh, a.maloai, a.soluongmua, b.dongia 
+                   FROM cthoadon1 a 
+                   INNER JOIN hanghoa b ON a.mahh = b.mahh 
+                   WHERE a.masohd = :sohd";  // Thêm tham số :sohd
+    
+        $params = [':sohd' => $sohd];  // Truyền tham số vào câu lệnh SQL
+    
+        // Trả về PDO statement thay vì mảng
+        $stmt = $db->getList($select, $params);  
+        return $stmt;  // Trả về đối tượng PDO statement
     }
+    
+    
 }

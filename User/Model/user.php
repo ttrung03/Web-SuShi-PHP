@@ -1,9 +1,8 @@
 <?php
+require_once 'connect.php';
 class user
 {
-    function __construct()
-    {
-    }
+    function __construct() {}
     //phương thức insert vào bảng khách hàng
     // select là query thực thi
     // insert. update, delete,... là exec thực thi
@@ -13,29 +12,47 @@ class user
     {
         $db = new connect();
         $select = "select * from khachhang1 where username='$user' and email='$email'";
-        if ($select) {
+        $existingUser = $db->getInstance($select);  // Kiểm tra người dùng đã tồn tại
+
+        if (!$existingUser) {  // Chỉ thêm mới nếu chưa có người dùng với username và email này
             $query = "insert into khachhang1(makh, tenkh, username, matkhau, email, diachi, sodienthoai, vaitro) 
             values(NULL, '$tenkh', '$user', '$matkhau', '$email', '$diachi', '$dt', default)";
             $db->exec($query);
-        } else {
         }
     }
-    function InsetUserOut($tenkh, $email, $diachi, $dt)
-    {
-        $db = new connect();
-        $select = "select * from user1 where tenkh='$tenkh' and email='$email'";
-        if ($select) {
-            $query = "insert into user1(makh, tenkh, email, diachi, sodienthoai) 
-            values(NULL, '$tenkh', '$email', '$diachi', '$dt')";
-            $db->exec($query);
-        }
+
+
+// Phương thức InsertUserOut trong user.php
+function InsertUserOut($tenkh, $email, $diachi, $dt)
+{
+    $db = new connect();
+
+    // Tạo username từ tên người dùng
+    $username = strtolower(str_replace(' ', '', $tenkh));  // Loại bỏ khoảng trắng và chuyển thành chữ thường
+    
+    // Câu lệnh INSERT
+    $query = "INSERT INTO khachhang1 (makh, tenkh, username, email, diachi, sodienthoai) 
+              VALUES (NULL, :tenkh, :username, :email, :diachi, :dt)";
+    $params = [
+        ':tenkh' => $tenkh,
+        ':username' => $username,
+        ':email' => $email,
+        ':diachi' => $diachi,
+        ':dt' => $dt
+    ];
+
+    // Kiểm tra câu lệnh thực thi
+    try {
+        // Thực thi câu lệnh INSERT
+        $db->exec($query, $params);
+        return true; // Trả về true khi thêm người dùng thành công
+    } catch (PDOException $e) {
+        // Nếu có lỗi, thông báo lỗi
+        echo "Lỗi khi thêm người dùng: " . $e->getMessage();
+        return false;
     }
-    function InsetUserOut1()
-    {
-        $db = new connect();
-        $select = "select makh from user1 ";
-        return $select;
-    }
+}
+  
 
     function login($username, $password)
     {
@@ -88,5 +105,14 @@ class user
         echo $emailold;
         $query = "update khachhang1 set matkhau = '$passnew' where email = '$emailold'";
         $db->exec($query);
+    }
+
+
+    function getUserByEmail($email)
+    {
+        $db = new connect();
+        $select = "SELECT * FROM khachhang1 WHERE email = '$email'";
+        $result = $db->getInstance($select);
+        return $result;
     }
 }

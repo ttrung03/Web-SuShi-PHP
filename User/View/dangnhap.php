@@ -20,9 +20,16 @@
 
                 <div class="form-btn">
                     <button class="form-submit">Đăng nhập</button>
-
                 </div>
                 <a href="index.php?action=dangky" class="dangky ">Đăng ký</a>
+
+                 <!-- Thêm nút Đăng nhập với Google -->
+            <div class="google-btn">
+                <a href="Controller/loginWithGoogle.php" class="btn btn-google">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/5/51/Google_g_logo.svg" alt="Google Logo" class="google-logo">
+                    Đăng nhập với Google
+                </a>
+            </div>
         </form>
     </div>
 </section>

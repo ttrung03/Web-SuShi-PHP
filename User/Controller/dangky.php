@@ -33,7 +33,35 @@ switch ($act) {
             }
         }
         break;
+        
+        case 'google_register':
+            include './View/dangky_google.php'; // View mới để nhập thêm thông tin
+            break;
     
+        
+            case 'google_register_action':
+                if (isset($_POST['email'])) {
+                    $tenkh = $_POST['tenkh'];
+                    $diachi = $_POST['diachi'];
+                    $sodt = $_POST['sodt'];
+                    $email = $_POST['email'];
+                    $username = explode('@', $email)[0]; // tạo username từ email
+                    $pass = ''; // không cần mật khẩu (vì login Google)
+            
+                    $ur = new user();
+                    $check = $ur->InsetUser($tenkh, $username, $pass, $email, $diachi, $sodt);
+                    if ($check != 'false') {
+                        $_SESSION['makh'] = $check;
+                        $_SESSION['tenkh'] = $tenkh;
+                        echo '<script>alert("Tạo tài khoản thành công!");</script>';
+                        include './View/main.php';
+                    } else {
+                        echo '<script>alert("Tạo tài khoản thất bại!");</script>';
+                        include './View/dangky_google.php';
+                    }
+                }
+                break;
+
     default:
         # code...
         break;

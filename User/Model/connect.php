@@ -21,20 +21,43 @@
         }
 
         // Phương thức thực thi cau truy vấn select trả về nhiều object
-        public function getList($select){
-            $result = $this ->db -> query($select);
-            return $result;
+        public function getList($select, $params = []) {
+            try {
+                $stmt = $this->db->prepare($select);  // Chuẩn bị câu lệnh SQL
+                $stmt->execute($params);  // Thực thi câu lệnh với tham số
+                return $stmt;  // Trả về PDO statement
+            } catch (PDOException $e) {
+                echo "Lỗi truy vấn: " . $e->getMessage();
+                return false;  // Nếu có lỗi, trả về false
+            }
         }
         
-        public function getInstance($select){
-            $result=$this->db->query($select);
-            $result= $result->fetch(); // chính là 1 array
-            return $result;
+        public function getInstance($select, $params = []) {
+            try {
+                // Chuẩn bị câu lệnh SQL
+                $stmt = $this->db->prepare($select);  
+                
+                // Thực thi câu lệnh với tham số
+                $stmt->execute($params);  
+        
+                // Lấy kết quả đầu tiên
+                return $stmt->fetch(PDO::FETCH_ASSOC); 
+            } catch (PDOException $e) {
+                echo "Lỗi truy vấn: " . $e->getMessage();
+                return false;  // Nếu có lỗi, trả về false
+            }
         }
+        
         
          //user 
          public function exec ($query) {
-            $result= $this ->db-> exec($query);
-            return $result;
-        }
+            try {
+                $stmt = $this->db->prepare($query);  // Chuẩn bị câu lệnh SQL
+                $result = $stmt->execute();  // Thực thi câu lệnh
+                return $result;  // Trả về kết quả
+            } catch (PDOException $e) {
+                echo "Lỗi thực thi câu lệnh: " . $e->getMessage();
+                return false;
+            }
     }
+}

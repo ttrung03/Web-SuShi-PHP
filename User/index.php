@@ -2,6 +2,7 @@
 session_start();
 include "./PHPMailer/src/PHPMailer.php";
 include "./PHPMailer/src/SMTP.php";
+require 'vendor/autoload.php';
 
 set_include_path(get_include_path() . PATH_SEPARATOR . 'Model/'); // dang ky duong nhan voi model
 spl_autoload_extensions('.php'); //lay do co ten .php 
