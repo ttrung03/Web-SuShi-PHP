@@ -87,9 +87,7 @@
                         $result = $hh->getFilterProduct($ValueFilter, $ValueFilterType);
                     }
 
-                    // $ValueFilter = $_POST['ValueFilter'];
-                    // $result = $hh->getFilterProductPage($ValueFilter, $start, $limit);
-                    // $result = $hh->getHangHoaAllPage($start, $limit);
+
                 } else {
                     $result = $hh->getHangHoaAllPage($start, $limit);
                 }
@@ -139,8 +137,7 @@
                 ?>
 
 
-                <!-- <i class='bx bx-chevron-left btn_paging'></i>
-              <i class='bx bx-chevron-right btn_paging'></i> -->
+
 
             </div>
 

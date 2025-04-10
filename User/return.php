@@ -25,14 +25,11 @@ $secureHash = hash_hmac('sha512', $hashData, $vnp_HashSecret);
 
 if ($secureHash === $vnp_SecureHash) {
     if ($_GET['vnp_ResponseCode'] == '00') {
-        // ✅ THANH TOÁN THÀNH CÔNG
+        // THANH TOÁN THÀNH CÔNG
         error_log("VNPAY payment successful - order ID: " . $_GET['vnp_TxnRef']);
 
-        // 👉 Gọi model để lưu đơn hàng nếu cần
-        // $model = new PaymentModel();
-        // $model->saveOrder(...);
 
-        // ✅ Gán thông tin đơn hàng vào SESSION nếu muốn in ra
+        // Gán thông tin đơn hàng vào SESSION nếu muốn in ra
         $_SESSION['order_info'] = [
             'order_id' => $_GET['vnp_TxnRef'],
             'amount' => $_GET['vnp_Amount'] / 100,
@@ -53,8 +50,8 @@ if ($secureHash === $vnp_SecureHash) {
         header("Location: index.php?action=orderout");
         exit;
     } else {
-        echo "❌ Giao dịch không thành công.";
+        echo " Giao dịch không thành công.";
     }
 } else {
-    echo "❌ Chữ ký không hợp lệ.";
+    echo " Chữ ký không hợp lệ.";
 }

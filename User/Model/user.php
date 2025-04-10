@@ -110,20 +110,20 @@ class user
     }
     */
 
-    // Fixed: Use prepared statements
-    function login($username, $password) // password here is the md5 hash from controller
+
+    function login($username, $password) 
     {
         $db = new connect();
         $select = "SELECT * FROM khachhang1 WHERE username = :username AND matkhau = :password";
         $params = [
             ':username' => $username,
-            ':password' => $password // Expecting md5 hash
+            ':password' => $password 
         ];
-        $result = $db->getInstance($select, $params); // Use getInstance as login returns one user
-        return $result; // Returns user data array or false
+        $result = $db->getInstance($select, $params); 
+        return $result; 
     }
 
-    // Fixed: Use prepared statements
+   
     function insertcomment($mahh, $makh, $noidung)
     {
         $db = new connect();
@@ -139,10 +139,10 @@ class user
             ':ngaybl' => $datecreate,
             ':noidung' => $noidung
         ];
-        $db->exec($query, $params); // exec doesn't need result check for simple insert usually
+        $db->exec($query, $params); 
     }
 
-    // Fixed: Already using prepared statements
+   
     function getCountComment($mahh)
     {
         $db = new connect();
@@ -152,20 +152,20 @@ class user
         return $result ? $result['count'] : 0;
     }
 
-    // Fixed: Already using prepared statements
+ 
     function getNoiDungComment($mahh)
     {
         $db = new connect();
         $select = "SELECT a.username, b.noidung, b.ngaybl 
                    FROM khachhang1 a
                    INNER JOIN binhluan1 b ON a.makh = b.makh 
-                   WHERE b.mahh = :mahh ORDER BY b.ngaybl DESC"; // Added ordering
+                   WHERE b.mahh = :mahh ORDER BY b.ngaybl DESC"; 
         $params = [':mahh' => $mahh];
-        $result = $db->getList($select, $params); // Returns PDOStatement
-        return $result; // Return statement to fetch in view/controller
+        $result = $db->getList($select, $params); 
+        return $result; 
     }
 
-    // Fixed: Use prepared statements
+  
     function getEmail($email)
     {
         $db = new connect();
@@ -175,8 +175,8 @@ class user
         return $result;
     }
 
-    // Fixed: Use prepared statements
-    function updateEmail($emailold, $passnew) // passnew should be the md5 hash
+
+    function updateEmail($emailold, $passnew) 
     {
         $db = new connect();
         $query = "UPDATE khachhang1 SET matkhau = :passnew WHERE email = :emailold";
@@ -187,29 +187,29 @@ class user
         $db->exec($query, $params);
     }
 
-    // Fixed: Use prepared statements
+
     function getUserByEmail($email)
     {
         $db = new connect();
         $select = "SELECT * FROM khachhang1 WHERE email = :email";
         $params = [':email' => $email];
         $result = $db->getInstance($select, $params);
-        return $result; // Returns user data array or false
+        return $result; 
     }
 
-    // Refined: Use prepared statements (already done), added username check
+   
     function addGoogleUser($tenkh, $email, $phone, $address)
     {
         $db = new connect();
 
-        // Check if user already exists with this email
-        $existingUser = $this->getUserByEmail($email); // Use existing method
+       
+        $existingUser = $this->getUserByEmail($email); 
         if ($existingUser) {
             error_log("addGoogleUser Info: User with email (".$email.") already exists. Returning existing ID: " . $existingUser['makh']);
-            return $existingUser['makh']; // User already exists, return their ID
+            return $existingUser['makh']; 
         }
 
-        // Tạo username đơn giản từ email, check for uniqueness
+        
         $base_username = explode('@', $email)[0];
         $username = $base_username;
         $counter = 1;
@@ -219,10 +219,10 @@ class user
             if (!$db->getInstance($select_user, $params_user)) {
                 break; // Username is unique
             }
-            // If username exists, append a number
+            
             $username = $base_username . $counter;
             $counter++;
-             if ($counter > 100) { // Safety break
+             if ($counter > 100) { 
                  error_log("addGoogleUser Error: Could not generate unique username for base: " . $base_username);
                  return false;
              }
@@ -230,7 +230,7 @@ class user
         
         error_log("addGoogleUser Info: Generated username (".$username.") for email (".$email.")");
 
-        // Insert the new Google user (no password)
+       
         $query = "INSERT INTO khachhang1 (makh, tenkh, username, matkhau, email, diachi, sodienthoai, vaitro) 
                   VALUES (NULL, :tenkh, :username, '', :email, :address, :phone, default)";
 
@@ -245,7 +245,7 @@ class user
         try {
             $result = $db->exec($query, $params);
             if ($result) {
-                // Lấy mã khách hàng mới nhất
+            
                 $lastIdResult = $db->getInstance("SELECT LAST_INSERT_ID() as makh");
                  error_log("addGoogleUser Success: Added user (".$username.") with ID: " . ($lastIdResult ? $lastIdResult['makh'] : 'N/A'));
                 return $lastIdResult ? $lastIdResult['makh'] : true;
@@ -259,19 +259,19 @@ class user
         }
     }
 
-    // Method to register a user during checkout (guest or new user)
+  
     function registerUserFromCheckout($tenkh, $email, $diachi, $dt)
     {
         $db = new connect();
 
-        // Check if user already exists with this email
+       
         $existingUser = $this->getUserByEmail($email);
         if ($existingUser) {
             error_log("registerUserFromCheckout Info: User with email (".$email.") already exists. Returning existing ID: " . $existingUser['makh']);
-            return $existingUser['makh']; // User already exists, return their ID
+            return $existingUser['makh'];
         }
 
-        // Generate unique username from email
+        
         $base_username = explode('@', $email)[0];
         $username = $base_username;
         $counter = 1;
@@ -281,10 +281,10 @@ class user
             if (!$db->getInstance($select_user, $params_user)) {
                 break; // Username is unique
             }
-            // If username exists, append a number
+            
             $username = $base_username . $counter;
             $counter++;
-             if ($counter > 100) { // Safety break
+             if ($counter > 100) { 
                  error_log("registerUserFromCheckout Error: Could not generate unique username for base: " . $base_username);
                  return false;
              }
@@ -292,7 +292,7 @@ class user
         
         error_log("registerUserFromCheckout Info: Generated username (".$username.") for email (".$email.")");
 
-        // Insert new user (no password)
+        
         $query = "INSERT INTO khachhang1 (makh, tenkh, username, matkhau, email, diachi, sodienthoai, vaitro)
                   VALUES (NULL, :tenkh, :username, '', :email, :diachi, :dt, default)"; // Empty password
         $params = [

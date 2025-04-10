@@ -8,7 +8,7 @@
           <input type="hidden" name="email" value="">
           <label for="name" class="form-label">Nhập Mật Khẩu Mới:</label>
           <input type="password" required="" autofocus="" name="password" class="form-control" placeholder="VD: example@gmai.com">
-          <!-- <span class="form-message" v-show="invalidName">{{errors.name}}</span> -->
+       
         </div>
 
         <div class="form-btn">
