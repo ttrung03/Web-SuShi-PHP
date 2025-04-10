@@ -30,15 +30,19 @@ class hoadon
     {
         $db = new connect();
         $query = "INSERT INTO cthoadon1 (masohd, mahh, soluongmua, maloai, thanhtien, tinhtrang) 
-                  VALUES (:mahd, :mahh, :solung, :maloai, :thanhtien, 0)";
+                  VALUES (:mahd, :mahh, :soluong, :maloai, :thanhtien, 0)";
         
         $params = [
             ':mahd' => $mahd,
             ':mahh' => $mah,
-            ':soluong' => $soluong,  // Lưu đúng số lượng
+            ':soluong' => $soluong,  // Fixed parameter name
             ':maloai' => $maloai,
             ':thanhtien' => $thanhtien
         ];
+        
+        // Debug
+        error_log("Debug insertOrderDetail - SQL: " . $query . " - params: " . json_encode($params));
+        
         $db->exec($query, $params);  // Thực thi câu lệnh
     }
     
@@ -100,6 +104,9 @@ class hoadon
                    WHERE a.masohd = :sohd";  // Thêm tham số :sohd
     
         $params = [':sohd' => $sohd];  // Truyền tham số vào câu lệnh SQL
+        
+        // Debug statement
+        error_log("Debug getOrderDetail - SQL: " . $select . " - sohd: " . $sohd);
     
         // Trả về PDO statement thay vì mảng
         $stmt = $db->getList($select, $params);  

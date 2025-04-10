@@ -3,14 +3,26 @@
         <table class="table">
             <?php
             $hd = new hoadon();
-            $result = $hd->getOrder($_SESSION['sohd']);
-            $sohdon = $result['masohd'];
-            $ngay = $result['ngaydat'];
-            $ten = $result['tenkh'];
-            $diachi = $result['diachi'];
-            $dt = $result['sodienthoai'];
 
-            $d = new DateTime($ngay);
+            if (isset($_SESSION['sohd'])) {
+                $result = $hd->getOrder($_SESSION['sohd']);
+
+                if ($result && is_array($result)) {
+                    $sohdon = $result['masohd'];
+                    $ngay = $result['ngaydat'];
+                    $ten = $result['tenkh'];
+                    $diachi = $result['diachi'];
+                    $dt = $result['sodienthoai'];
+
+                    $d = new DateTime($ngay);
+                } else {
+                    echo "<h3 style='color:red; text-align:center'>Không tìm thấy thông tin hóa đơn!</h3>";
+                    return; // dừng code, không load tiếp view
+                }
+            } else {
+                echo "<h3 style='color:red; text-align:center'>Không tìm thấy số hóa đơn!</h3>";
+                return;
+            }
             ?>
 
             <tr>
@@ -50,12 +62,31 @@
             <tbody>
                 <?php
                 $j = 0;
+                
+
+                
+                // Check if cart is empty
+                if (!isset($_SESSION['cart']) || empty($_SESSION['cart'])) {
+                    echo "Cart is empty - no items to display<br>";
+                } else {
+                    echo "Cart has " . count($_SESSION['cart']) . " items<br>";
+                }
+                
                 $result = $hd->getOrderDetail($_SESSION['sohd']);
-                while ($set = $result->fetch()) :
+                
+                // Count rows in result
+                $rowCount = $result->rowCount();
+                echo "Query returned " . $rowCount . " rows<br>";
+                echo "</td></tr>";
+                
+                $hasResults = false;
+                
+                while ($set = $result->fetch(PDO::FETCH_ASSOC)) :
+                    $hasResults = true;
                     $j++;
                     $hh = new hanghoa();
                     $tloai = $hh->getTenLoai($set['maloai']);
-                    $tenloai = $tloai['tenloai'];
+                    $tenloai = isset($tloai['tenloai']) ? $tloai['tenloai'] : "Không có loại";
                 ?>
 
                     <tr>
@@ -68,7 +99,10 @@
                     </tr>
                 <?php
                 endwhile;
-
+                
+                if (!$hasResults) {
+                    echo "<tr><td colspan='4' style='color:red;'>Không có chi tiết hóa đơn nào được tìm thấy.</td></tr>";
+                }
                 ?>
 
                 <tr>

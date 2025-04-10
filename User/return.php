@@ -26,6 +26,7 @@ $secureHash = hash_hmac('sha512', $hashData, $vnp_HashSecret);
 if ($secureHash === $vnp_SecureHash) {
     if ($_GET['vnp_ResponseCode'] == '00') {
         // ✅ THANH TOÁN THÀNH CÔNG
+        error_log("VNPAY payment successful - order ID: " . $_GET['vnp_TxnRef']);
 
         // 👉 Gọi model để lưu đơn hàng nếu cần
         // $model = new PaymentModel();
@@ -38,6 +39,15 @@ if ($secureHash === $vnp_SecureHash) {
             'payment_time' => $_GET['vnp_PayDate'],
             'bank' => $_GET['vnp_BankCode'],
         ];
+        
+        // Important: Make sure sohd session variable is set
+        if (isset($_SESSION['sohd'])) {
+            error_log("Found existing order ID in session: " . $_SESSION['sohd']);
+        } else {
+            // We need to set the order ID from VNPAY TxnRef
+            $_SESSION['sohd'] = $_GET['vnp_TxnRef'];
+            error_log("Setting session order ID from VNPAY: " . $_SESSION['sohd']);
+        }
 
         // ➡️ Chuyển hướng sang trang hiển thị hóa đơn
         header("Location: index.php?action=orderout");

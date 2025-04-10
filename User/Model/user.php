@@ -22,39 +22,39 @@ class user
     }
 
 
-// // Phương thức InsertUserOut trong user.php
-// function InsertUserOut($tenkh, $email, $diachi, $dt)
-// {
-//     $db = new connect();
+    // // Phương thức InsertUserOut trong user.php
+    // function InsertUserOut($tenkh, $email, $diachi, $dt)
+    // {
+    //     $db = new connect();
 
-//     // Tạo username từ tên người dùng
-//     $username = strtolower(str_replace(' ', '', $tenkh));  // Loại bỏ khoảng trắng và chuyển thành chữ thường
-    
-//     // Câu lệnh INSERT
-//     $query = "INSERT INTO khachhang1 (makh, tenkh, username, email, diachi, sodienthoai) 
-//               VALUES (NULL, :tenkh, :username, :email, :diachi, :dt)";
-//     $params = [
-//         ':tenkh' => $tenkh,
-//         ':username' => $username,
-//         ':email' => $email,
-//         ':diachi' => $diachi,
-//         ':dt' => $dt
-//     ];
+    //     // Tạo username từ tên người dùng
+    //     $username = strtolower(str_replace(' ', '', $tenkh));  // Loại bỏ khoảng trắng và chuyển thành chữ thường
 
-//     // Kiểm tra câu lệnh thực thi
-//     try {
-//         // Thực thi câu lệnh INSERT
-//         $db->exec($query, $params);
-//         return true; // Trả về true khi thêm người dùng thành công
-//     } catch (PDOException $e) {
-//         // Nếu có lỗi, thông báo lỗi
-//         echo "Lỗi khi thêm người dùng: " . $e->getMessage();
-//         return false;
-//     }
-// }
-  
+    //     // Câu lệnh INSERT
+    //     $query = "INSERT INTO khachhang1 (makh, tenkh, username, email, diachi, sodienthoai) 
+    //               VALUES (NULL, :tenkh, :username, :email, :diachi, :dt)";
+    //     $params = [
+    //         ':tenkh' => $tenkh,
+    //         ':username' => $username,
+    //         ':email' => $email,
+    //         ':diachi' => $diachi,
+    //         ':dt' => $dt
+    //     ];
 
-function InsetUserOut($tenkh, $email, $diachi, $dt)
+    //     // Kiểm tra câu lệnh thực thi
+    //     try {
+    //         // Thực thi câu lệnh INSERT
+    //         $db->exec($query, $params);
+    //         return true; // Trả về true khi thêm người dùng thành công
+    //     } catch (PDOException $e) {
+    //         // Nếu có lỗi, thông báo lỗi
+    //         echo "Lỗi khi thêm người dùng: " . $e->getMessage();
+    //         return false;
+    //     }
+    // }
+
+
+    function InsetUserOut($tenkh, $email, $diachi, $dt)
     {
         $db = new connect();
         $select = "select * from user1 where tenkh='$tenkh' and email='$email'";
@@ -82,57 +82,59 @@ function InsetUserOut($tenkh, $email, $diachi, $dt)
         $db = new connect();
         $date = new DateTime("now");
         $datecreate = $date->format("Y-m-d");
-    
+
         // Dùng tham số để bảo vệ khỏi SQL Injection
         $query = "INSERT INTO binhluan1 (mabl, mahh, makh, ngaybl, noidung) 
                   VALUES (NULL, :mahh, :makh, :ngaybl, :noidung)";
-        
+
         $params = [
             ':mahh' => $mahh,
             ':makh' => $makh,
             ':ngaybl' => $datecreate,
             ':noidung' => $noidung
         ];
-    
+
         // Thực thi câu lệnh
         $db->exec($query, $params);
+      
+        
     }
-    
-    
+
+
 
     function getCountComment($mahh)
-{
-    $db = new connect();
-    $select = "SELECT count(mabl) as count FROM binhluan1 WHERE mahh = :mahh";
-    $params = [':mahh' => $mahh];  // Truyền tham số an toàn
+    {
+        $db = new connect();
+        $select = "SELECT count(mabl) as count FROM binhluan1 WHERE mahh = :mahh";
+        $params = [':mahh' => $mahh];  // Truyền tham số an toàn
 
-    $result = $db->getInstance($select, $params);
-    
-    if ($result) {
-        return $result['count'];  // Trả về số lượng bình luận
-    } else {
-        return 0;  // Nếu không có bình luận, trả về 0
+        $result = $db->getInstance($select, $params);
+
+        if ($result) {
+            return $result['count'];  // Trả về số lượng bình luận
+        } else {
+            return 0;  // Nếu không có bình luận, trả về 0
+        }
     }
-}
 
-function getNoiDungComment($mahh)
-{
-    $db = new connect();
-    $select = "SELECT a.username, b.noidung, b.ngaybl 
+    function getNoiDungComment($mahh)
+    {
+        $db = new connect();
+        $select = "SELECT a.username, b.noidung, b.ngaybl 
                FROM khachhang1 a
                INNER JOIN binhluan1 b ON a.makh = b.makh 
                WHERE b.mahh = :mahh";
-    $params = [':mahh' => $mahh];  // Truyền tham số an toàn
+        $params = [':mahh' => $mahh];  // Truyền tham số an toàn
 
-    $result = $db->getList($select, $params);
-    
-    // Kiểm tra nếu không có bình luận nào
-    if ($result) {
-        return $result;  // Trả về dữ liệu bình luận
-    } else {
-        return [];  // Nếu không có bình luận, trả về mảng rỗng
+        $result = $db->getList($select, $params);
+
+        // Kiểm tra nếu không có bình luận nào
+        if ($result) {
+            return $result;  // Trả về dữ liệu bình luận
+        } else {
+            return [];  // Nếu không có bình luận, trả về mảng rỗng
+        }
     }
-}
 
     //kiểm tra email có tồn tại không 
     function getEmail($email)
@@ -163,13 +165,13 @@ function getNoiDungComment($mahh)
     function addGoogleUser($tenkh, $email, $phone, $address)
     {
         $db = new connect();
-    
+
         // Tạo username đơn giản từ email
         $username = explode('@', $email)[0];
-    
+
         $query = "INSERT INTO khachhang1 (tenkh, username, email, sodienthoai, diachi) 
                   VALUES (:tenkh, :username, :email, :phone, :address)";
-    
+
         $params = [
             ':tenkh' => $tenkh,
             ':username' => $username,
@@ -177,10 +179,10 @@ function getNoiDungComment($mahh)
             ':phone' => $phone,
             ':address' => $address
         ];
-    
+
         try {
             $db->exec($query, $params);
-    
+
             // Lấy mã khách hàng mới nhất
             $result = $db->getInstance("SELECT LAST_INSERT_ID() as makh");
             return $result['makh'];
@@ -189,5 +191,4 @@ function getNoiDungComment($mahh)
             return false;
         }
     }
-    
 }

@@ -10,7 +10,7 @@ $name = $_SESSION['google_name'];
 ?>
 
 <h2>Đăng ký tài khoản bằng Google</h2>
-<form action="index.php?action=google_register_action" method="POST">
+<form action="../index.php?action=dangky&act=google_register_action" method="post">
     <input type="hidden" name="email" value="<?= htmlspecialchars($email) ?>">
 
     <label>Họ tên:</label><br>

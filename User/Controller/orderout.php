@@ -5,7 +5,16 @@ if (isset($_GET['act'])) {
 }
 switch ($act) {
     case 'orderout':
-        include './View/orderout.php';
+        error_log("Orderout controller - sohd in session: " . (isset($_SESSION['sohd']) ? $_SESSION['sohd'] : 'Not set'));
+        
+        // Make sure we have an order ID
+        if (!isset($_SESSION['sohd'])) {
+            echo "<h3 style='color:red; text-align:center'>Không tìm thấy thông tin hóa đơn!</h3>";
+            include './View/sanpham.php';
+        } else {
+            // Load the order view to display details
+            include './View/order.php';
+        }
         break;
 
     case 'orderout_action':
