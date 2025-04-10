@@ -23,13 +23,18 @@
                 </div>
                 <a href="index.php?action=dangky" class="dangky ">Đăng ký</a>
 
-                 <!-- Thêm nút Đăng nhập với Google -->
-            <div class="google-btn">
-                <a href="Controller/loginWithGoogle.php" class="btn btn-google">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/5/51/Google_g_logo.svg" alt="Google Logo" class="google-logo">
-                    Đăng nhập với Google
-                </a>
-            </div>
+                <!-- Thêm nút Đăng nhập với Google -->
+                <div style="text-align: center; margin-top: 10px;">
+                    <a href="Controller/loginWithGoogle.php"
+                        style="display: inline-flex; align-items: center; padding: 8px 15px; background-color: white; color: #444; border: 1px solid #ccc; border-radius: 4px; text-decoration: none; font-weight: bold; transition: background-color 0.3s ease;">
+
+                        <img src="https://developers.google.com/identity/images/g-logo.png"
+                            alt="Google Logo"
+                            style="width: 20px; height: 20px; margin-right: 8px; vertical-align: middle;">
+
+                        Đăng nhập với Google
+                    </a>
+                </div>
         </form>
     </div>
 </section>

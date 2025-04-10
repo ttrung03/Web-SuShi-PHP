@@ -8,19 +8,47 @@ class user
     // insert. update, delete,... là exec thực thi
     //phương thức thêm
 
+    // Fixed: Use prepared statements to prevent SQL injection
     function InsetUser($tenkh, $user, $matkhau, $email, $diachi, $dt)
     {
         $db = new connect();
-        $select = "select * from khachhang1 where username='$user' and email='$email'";
-        $existingUser = $db->getInstance($select);  // Kiểm tra người dùng đã tồn tại
+        // Check if username or email already exists
+        $select = "SELECT makh FROM khachhang1 WHERE username = :username OR email = :email";
+        $params_check = [':username' => $user, ':email' => $email];
+        $existingUser = $db->getInstance($select, $params_check);
 
-        if (!$existingUser) {  // Chỉ thêm mới nếu chưa có người dùng với username và email này
-            $query = "insert into khachhang1(makh, tenkh, username, matkhau, email, diachi, sodienthoai, vaitro) 
-            values(NULL, '$tenkh', '$user', '$matkhau', '$email', '$diachi', '$dt', default)";
-            $db->exec($query);
+        if ($existingUser) {
+             error_log("InsetUser Error: Username (".$user.") or Email (".$email.") already exists.");
+            return 'false'; // Indicate failure (user exists)
+        }
+
+        // Insert new user
+        $query = "INSERT INTO khachhang1(makh, tenkh, username, matkhau, email, diachi, sodienthoai, vaitro) 
+                  VALUES (NULL, :tenkh, :username, :matkhau, :email, :diachi, :dt, default)";
+        $params_insert = [
+            ':tenkh' => $tenkh,
+            ':username' => $user,
+            ':matkhau' => $matkhau, // Should be hashed password (md5($pass) from controller)
+            ':email' => $email,
+            ':diachi' => $diachi,
+            ':dt' => $dt
+        ];
+        
+        try {
+            $result = $db->exec($query, $params_insert);
+            if ($result) {
+                 // Optionally return the new user ID
+                 $lastIdResult = $db->getInstance("SELECT LAST_INSERT_ID() as makh");
+                 return $lastIdResult ? $lastIdResult['makh'] : true; // Return new ID or true
+            } else {
+                error_log("InsetUser Error: Database execution failed.");
+                return 'false';
+            }
+        } catch (PDOException $e) {
+            error_log("InsetUser PDOException: " . $e->getMessage());
+            return 'false';
         }
     }
-
 
     // // Phương thức InsertUserOut trong user.php
     // function InsertUserOut($tenkh, $email, $diachi, $dt)
@@ -53,37 +81,55 @@ class user
     //     }
     // }
 
-
+    // This function seems unused or related to a different table (user1)? 
+    // Commenting out for now unless it's needed.
+    /*
     function InsetUserOut($tenkh, $email, $diachi, $dt)
     {
         $db = new connect();
-        $select = "select * from user1 where tenkh='$tenkh' and email='$email'";
-        if ($select) {
+        // Should check khachhang1 table?
+        $select = "select * from khachhang1 where email= :email"; 
+        $params_check = [':email' => $email];
+        $existing = $db->getInstance($select, $params_check);
+        
+        // Logic needs clarification - insert into user1 if email exists in khachhang1?
+        if ($existing) { 
+            // Should use prepared statements here too
             $query = "insert into user1(makh, tenkh, email, diachi, sodienthoai) 
-            values(NULL, '$tenkh', '$email', '$diachi', '$dt')";
-            $db->exec($query);
-        }
+                      values(NULL, :tenkh, :email, :diachi, :dt)";
+            $params_insert = [
+                ':tenkh' => $tenkh,
+                ':email' => $email,
+                ':diachi' => $diachi,
+                ':dt' => $dt
+            ];
+            $db->exec($query, $params_insert);
+             return true; // Indicate success?
+        } 
+        return false; // Indicate failure?
     }
+    */
 
-
-    function login($username, $password)
+    // Fixed: Use prepared statements
+    function login($username, $password) // password here is the md5 hash from controller
     {
         $db = new connect();
-        $select = "select * from khachhang1 where username='$username' and matkhau='$password'";
-        //echo $select;
-        $result = $db->getList($select);
-        $set = $result->fetch();
-        return $set;
+        $select = "SELECT * FROM khachhang1 WHERE username = :username AND matkhau = :password";
+        $params = [
+            ':username' => $username,
+            ':password' => $password // Expecting md5 hash
+        ];
+        $result = $db->getInstance($select, $params); // Use getInstance as login returns one user
+        return $result; // Returns user data array or false
     }
 
-
+    // Fixed: Use prepared statements
     function insertcomment($mahh, $makh, $noidung)
     {
         $db = new connect();
         $date = new DateTime("now");
         $datecreate = $date->format("Y-m-d");
 
-        // Dùng tham số để bảo vệ khỏi SQL Injection
         $query = "INSERT INTO binhluan1 (mabl, mahh, makh, ngaybl, noidung) 
                   VALUES (NULL, :mahh, :makh, :ngaybl, :noidung)";
 
@@ -93,84 +139,100 @@ class user
             ':ngaybl' => $datecreate,
             ':noidung' => $noidung
         ];
-
-        // Thực thi câu lệnh
-        $db->exec($query, $params);
-      
-        
+        $db->exec($query, $params); // exec doesn't need result check for simple insert usually
     }
 
-
-
+    // Fixed: Already using prepared statements
     function getCountComment($mahh)
     {
         $db = new connect();
         $select = "SELECT count(mabl) as count FROM binhluan1 WHERE mahh = :mahh";
-        $params = [':mahh' => $mahh];  // Truyền tham số an toàn
-
+        $params = [':mahh' => $mahh];
         $result = $db->getInstance($select, $params);
-
-        if ($result) {
-            return $result['count'];  // Trả về số lượng bình luận
-        } else {
-            return 0;  // Nếu không có bình luận, trả về 0
-        }
+        return $result ? $result['count'] : 0;
     }
 
+    // Fixed: Already using prepared statements
     function getNoiDungComment($mahh)
     {
         $db = new connect();
         $select = "SELECT a.username, b.noidung, b.ngaybl 
-               FROM khachhang1 a
-               INNER JOIN binhluan1 b ON a.makh = b.makh 
-               WHERE b.mahh = :mahh";
-        $params = [':mahh' => $mahh];  // Truyền tham số an toàn
-
-        $result = $db->getList($select, $params);
-
-        // Kiểm tra nếu không có bình luận nào
-        if ($result) {
-            return $result;  // Trả về dữ liệu bình luận
-        } else {
-            return [];  // Nếu không có bình luận, trả về mảng rỗng
-        }
+                   FROM khachhang1 a
+                   INNER JOIN binhluan1 b ON a.makh = b.makh 
+                   WHERE b.mahh = :mahh ORDER BY b.ngaybl DESC"; // Added ordering
+        $params = [':mahh' => $mahh];
+        $result = $db->getList($select, $params); // Returns PDOStatement
+        return $result; // Return statement to fetch in view/controller
     }
 
-    //kiểm tra email có tồn tại không 
+    // Fixed: Use prepared statements
     function getEmail($email)
     {
         $db = new connect();
-        $select = "select * from khachhang1 where email = '$email'";
-        $result = $db->getInstance($select);
+        $select = "SELECT * FROM khachhang1 WHERE email = :email";
+        $params = [':email' => $email];
+        $result = $db->getInstance($select, $params);
         return $result;
     }
 
-    function updateEmail($emailold, $passnew)
+    // Fixed: Use prepared statements
+    function updateEmail($emailold, $passnew) // passnew should be the md5 hash
     {
         $db = new connect();
-        echo $emailold;
-        $query = "update khachhang1 set matkhau = '$passnew' where email = '$emailold'";
-        $db->exec($query);
+        $query = "UPDATE khachhang1 SET matkhau = :passnew WHERE email = :emailold";
+        $params = [
+            ':passnew' => $passnew,
+            ':emailold' => $emailold
+        ];
+        $db->exec($query, $params);
     }
 
-
+    // Fixed: Use prepared statements
     function getUserByEmail($email)
     {
         $db = new connect();
-        $select = "SELECT * FROM khachhang1 WHERE email = '$email'";
-        $result = $db->getInstance($select);
-        return $result;
+        $select = "SELECT * FROM khachhang1 WHERE email = :email";
+        $params = [':email' => $email];
+        $result = $db->getInstance($select, $params);
+        return $result; // Returns user data array or false
     }
 
+    // Refined: Use prepared statements (already done), added username check
     function addGoogleUser($tenkh, $email, $phone, $address)
     {
         $db = new connect();
 
-        // Tạo username đơn giản từ email
-        $username = explode('@', $email)[0];
+        // Check if user already exists with this email
+        $existingUser = $this->getUserByEmail($email); // Use existing method
+        if ($existingUser) {
+            error_log("addGoogleUser Info: User with email (".$email.") already exists. Returning existing ID: " . $existingUser['makh']);
+            return $existingUser['makh']; // User already exists, return their ID
+        }
 
-        $query = "INSERT INTO khachhang1 (tenkh, username, email, sodienthoai, diachi) 
-                  VALUES (:tenkh, :username, :email, :phone, :address)";
+        // Tạo username đơn giản từ email, check for uniqueness
+        $base_username = explode('@', $email)[0];
+        $username = $base_username;
+        $counter = 1;
+        while (true) {
+            $select_user = "SELECT makh FROM khachhang1 WHERE username = :username";
+            $params_user = [':username' => $username];
+            if (!$db->getInstance($select_user, $params_user)) {
+                break; // Username is unique
+            }
+            // If username exists, append a number
+            $username = $base_username . $counter;
+            $counter++;
+             if ($counter > 100) { // Safety break
+                 error_log("addGoogleUser Error: Could not generate unique username for base: " . $base_username);
+                 return false;
+             }
+        }
+        
+        error_log("addGoogleUser Info: Generated username (".$username.") for email (".$email.")");
+
+        // Insert the new Google user (no password)
+        $query = "INSERT INTO khachhang1 (makh, tenkh, username, matkhau, email, diachi, sodienthoai, vaitro) 
+                  VALUES (NULL, :tenkh, :username, '', :email, :address, :phone, default)";
 
         $params = [
             ':tenkh' => $tenkh,
@@ -181,13 +243,78 @@ class user
         ];
 
         try {
-            $db->exec($query, $params);
-
-            // Lấy mã khách hàng mới nhất
-            $result = $db->getInstance("SELECT LAST_INSERT_ID() as makh");
-            return $result['makh'];
+            $result = $db->exec($query, $params);
+            if ($result) {
+                // Lấy mã khách hàng mới nhất
+                $lastIdResult = $db->getInstance("SELECT LAST_INSERT_ID() as makh");
+                 error_log("addGoogleUser Success: Added user (".$username.") with ID: " . ($lastIdResult ? $lastIdResult['makh'] : 'N/A'));
+                return $lastIdResult ? $lastIdResult['makh'] : true;
+            } else {
+                 error_log("addGoogleUser Error: Database execution failed for username: " . $username);
+                return false;
+            }
         } catch (PDOException $e) {
-            echo "Lỗi khi thêm người dùng: " . $e->getMessage();
+            error_log("addGoogleUser PDOException for username (".$username."): " . $e->getMessage());
+            return false;
+        }
+    }
+
+    // Method to register a user during checkout (guest or new user)
+    function registerUserFromCheckout($tenkh, $email, $diachi, $dt)
+    {
+        $db = new connect();
+
+        // Check if user already exists with this email
+        $existingUser = $this->getUserByEmail($email);
+        if ($existingUser) {
+            error_log("registerUserFromCheckout Info: User with email (".$email.") already exists. Returning existing ID: " . $existingUser['makh']);
+            return $existingUser['makh']; // User already exists, return their ID
+        }
+
+        // Generate unique username from email
+        $base_username = explode('@', $email)[0];
+        $username = $base_username;
+        $counter = 1;
+        while (true) {
+            $select_user = "SELECT makh FROM khachhang1 WHERE username = :username";
+            $params_user = [':username' => $username];
+            if (!$db->getInstance($select_user, $params_user)) {
+                break; // Username is unique
+            }
+            // If username exists, append a number
+            $username = $base_username . $counter;
+            $counter++;
+             if ($counter > 100) { // Safety break
+                 error_log("registerUserFromCheckout Error: Could not generate unique username for base: " . $base_username);
+                 return false;
+             }
+        }
+        
+        error_log("registerUserFromCheckout Info: Generated username (".$username.") for email (".$email.")");
+
+        // Insert new user (no password)
+        $query = "INSERT INTO khachhang1 (makh, tenkh, username, matkhau, email, diachi, sodienthoai, vaitro)
+                  VALUES (NULL, :tenkh, :username, '', :email, :diachi, :dt, default)"; // Empty password
+        $params = [
+            ':tenkh' => $tenkh,
+            ':username' => $username,
+            ':email' => $email,
+            ':diachi' => $diachi,
+            ':dt' => $dt
+        ];
+
+        try {
+             $result = $db->exec($query, $params);
+             if ($result) {
+                $lastIdResult = $db->getInstance("SELECT LAST_INSERT_ID() as makh");
+                error_log("registerUserFromCheckout Success: Added user (".$username.") with ID: " . ($lastIdResult ? $lastIdResult['makh'] : 'N/A'));
+                return $lastIdResult ? $lastIdResult['makh'] : true; // Return new ID or true
+             } else {
+                error_log("registerUserFromCheckout Error: DB exec failed for username: " . $username);
+                return false;
+             }
+        } catch (PDOException $e) {
+            error_log("registerUserFromCheckout PDOException for username (".$username."): " . $e->getMessage());
             return false;
         }
     }

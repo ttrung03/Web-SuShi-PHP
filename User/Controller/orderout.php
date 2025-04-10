@@ -18,28 +18,54 @@ switch ($act) {
         break;
 
     case 'orderout_action':
-        // khi người dùng nhấn đăng kí, nó chuyển qua đây là tên, địa chỉ, sđt
-        if (isset($_POST['txttenkh'])) {
-            $tenkh = $_POST['txttenkh'];
-            $diachi = $_POST['txtdiachi'];
-            $sodt = $_POST['txtsodt'];
-            $username = $_POST['txtusername'];
-            $email = $_POST['txtemail'];
-            // mật khẩu người dùng nhập vào sẽ dùng md5 để mã hóa
+        // when user submits checkout form with details
+        if (isset($_POST['txttenkh']) && isset($_POST['txtemail'])) { // Added check for txtemail
+            $tenkh = trim($_POST['txttenkh']);
+            $diachi = trim($_POST['txtdiachi']);
+            $sodt = trim($_POST['txtsodt']);
+            $email = trim($_POST['txtemail']); // Get email from POST
+            // $username = $_POST['txtusername']; // Username not typically submitted here
             
-
-            //controller yêu cầu model viết lệnh insert vào bảng khách hàng
-            //trước khi insert kiểm tra $username có tồn tại trong database hay chưa
-            $ur = new user();
-                $check = $ur->InsetUserOut($tenkh, $email, $diachi, $sodt);
-
-            if ($check != 'false') {
-                echo '<script> alert("Mua hàng thành công");</script>';
-                include './View/order.php';
-            } else {
-                echo '<script> alert("Mua hàng không thành công");</script>';
-                include './View/orderout.php';
+            // Validate inputs
+            if (empty($tenkh) || empty($diachi) || empty($sodt) || empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                 echo '<script> alert("Vui lòng điền đầy đủ và đúng định dạng thông tin.");</script>';
+                 include './View/orderout.php'; // Show form again
+                 exit;
             }
+            
+            // Controller requests model to insert/get user for checkout
+            $ur = new user();
+            // Call the new method specifically for checkout registration
+            $makh = $ur->registerUserFromCheckout($tenkh, $email, $diachi, $sodt);
+
+            if ($makh !== false) {
+                 // User exists or was created, $makh holds their ID
+                 // Important: Associate this order with the user ID ($makh)
+                 // This logic might need adjustment depending on how orders are finalized
+                if (isset($_SESSION['sohd'])) {
+                     error_log("Orderout Action: Associating order (".$_SESSION['sohd'].") with user ID (".$makh.")");
+                    // Example: $hd = new hoadon(); $hd->updateOrderUser($_SESSION['sohd'], $makh);
+                    // If using a guest checkout flow, this might just be for record keeping
+                } else {
+                    error_log("Orderout Action Warning: No order ID (sohd) in session to associate with user (".$makh.")");
+                }
+                
+                echo '<script> alert("Thông tin đã được ghi nhận. Đơn hàng đang được xử lý.");</script>';
+                // Redirect to a final confirmation/thank you page or order view
+                 include './View/order.php'; // Show order details
+                 // Or maybe redirect: echo '<script>window.location.href="/Web-SuShi-PHP/User/index.php?action=thankyou";</script>';
+                exit;
+            } else {
+                 // Error message logged in model
+                echo '<script> alert("Có lỗi xảy ra khi xử lý thông tin. Vui lòng thử lại.");</script>';
+                include './View/orderout.php';
+                 exit;
+            }
+        } else {
+             // Handle cases where required POST data is missing
+             echo '<script> alert("Vui lòng điền đầy đủ thông tin.");</script>';
+             include './View/orderout.php';
+             exit;
         }
         break;
 
