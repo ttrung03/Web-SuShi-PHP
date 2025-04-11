@@ -39,8 +39,7 @@
             <button class="button" type="submit" id="product-buy" <?php echo (!$tinhtrang ? '' : 'disabled') ?>>Add To Cart</button>
         </form>
 
-        <!-- onclick="location.href='index.php?action=giohang'" -->
-        <!-- href="index.php?action=sanpham&act=cart" -->
+
         <div class="detail_product-img">
             <img src="<?php echo './Content/img/' . $hinh ?>" alt="about image" class="about__img">
             <div class="small_product-img flex">

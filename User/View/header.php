@@ -29,12 +29,9 @@
         </div>
 
         <div class="nav__buttons">
-            <!-- <a href="index.php?action=dangnhap" class="login nav__link">Login</a> -->
 
-            <!-- Shopping -->
             <i class='bx bx-shopping-bag' id="cart-button" onclick="location.href='index.php?action=giohang'"></i>
-            <!-- Theme Change button -->
-            <!-- <i class='bx bx-moon' id="theme-button"></i> -->
+
             <?php
             if (isset($_SESSION['makh']) && isset($_SESSION['tenkh'])) :
                 $name = $_SESSION['tenkh'];
@@ -49,7 +46,7 @@
             <?php
             endif;
             ?>
-            <!-- Toogle Button -->
+
             <div class="nav__toggle" id="nav-toggle">
                 <i class='bx bx-grid-alt'></i>
             </div>
