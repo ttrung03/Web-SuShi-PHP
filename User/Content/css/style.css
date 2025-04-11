@@ -1328,50 +1328,58 @@ input {
     justify-content: center;
 }
 
-.form {
-    width: 420px;
-    max-width: 100%;
-    min-height: 100px;
-    padding: 32px 24px;
-    text-align: center;
-    background-color: #fff;
-    border-radius: 2px;
-    margin: 24px;
-    align-self: center;
-    box-shadow: 0 5px 15px 0 rgba(51, 62, 73, 0.1);
+form {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    background-color: #f9f9f9;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 600px;
+    margin: 20px auto;
+    font-family: var(--body-font);
 }
-
 
 .form-group {
     display: flex;
-    margin-bottom: 16px;
-    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 20px;
 }
 
-.form-label,
-.form-message {
-    text-align: left;
-}
-
-.form-label {
-    font-weight: 700;
-    padding-bottom: 6px;
-    line-height: 1.8rem;
-    font-size: 1rem;
-}
-
-.form-control {
-    height: 40px;
-    padding: 8px 12px;
-    border: 1px solid #b3b3b3;
-    border-radius: 3px;
-    outline: none;
-    font-size: 1rem;
+label {
+    font-weight: var(--font-semi-bold);
+    width: 30%;
     color: var(--text-color);
+    font-size: var(--normal-font-size);
 }
 
-.form-control:hover {
-    border-color: var(--first-color-alt);
+input[type="text"] {
+    width: 70%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    box-sizing: border-box;
+    font-size: var(--normal-font-size);
+}
+
+button {
+    width: auto;
+    padding: 12px 24px;
+    background-color: var(--first-color);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: var(--normal-font-size);
+    transition: background-color 0.3s ease;
+    align-self: center;
+}
+
+button:hover {
+    background-color: var(--first-color-alt);
 }
 
 .form-group.invalid .form-control {
